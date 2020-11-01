@@ -1,0 +1,13 @@
+[ol8_ovt_aarch64]
+name=Oracle Linux 8 open-vm-tools custom-build($basearch)
+#baseurl=http://192.168.1.15:8000/RPMS/aarch64/
+baseurl=https://gowatana.github.io/open-vm-tools-ol8aarch64/RPMS
+gpgcheck=0
+enabled=1
+
+[ol8_ovt_src]
+name=Oracle Linux 8 open-vm-tools custom-build(src)
+#baseurl=http://192.168.1.15:8000/SRPMS/
+baseurl=https://gowatana.github.io/open-vm-tools-ol8aarch64/SRPMS
+gpgcheck=0
+enabled=1
