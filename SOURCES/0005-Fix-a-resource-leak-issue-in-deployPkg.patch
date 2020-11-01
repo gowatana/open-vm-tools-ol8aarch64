@@ -1,0 +1,90 @@
+From 9357c2476eb74a9862ec07d0ede8d933b734e5cc Mon Sep 17 00:00:00 2001
+From: Cathy Avery <cavery@redhat.com>
+Date: Tue, 3 Dec 2019 14:30:50 +0100
+Subject: Fix a resource leak issue in deployPkg
+
+RH-Author: Cathy Avery <cavery@redhat.com>
+Message-id: <20191203143050.23065-5-cavery@redhat.com>
+Patchwork-id: 92837
+O-Subject: [RHEL8.2 open-vm-tools PATCH 4/4] Fix a resource leak issue in deployPkg
+Bugzilla: 1769881
+RH-Acked-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+RH-Acked-by: Miroslav Rezanina <mrezanin@redhat.com>
+
+commit 2ffd2913088505d8249fa342b0ee8e5002a69108
+Author: Oliver Kurth <okurth@vmware.com>
+Date:   Fri Nov 22 14:52:35 2019 -0800
+
+    Fix a resource leak issue in deployPkg
+
+    Variable file going out of scope in error path leaks the storage it
+    points to.  Added fclose before return when malloc failed.
+
+Signed-off-by: Cathy Avery <cavery@redhat.com>
+Signed-off-by: Miroslav Rezanina <mrezanin@redhat.com>
+---
+ open-vm-tools/libDeployPkg/linuxDeployment.c | 23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
+
+diff --git a/open-vm-tools/libDeployPkg/linuxDeployment.c b/open-vm-tools/libDeployPkg/linuxDeployment.c
+index 1af0893..4f36a00 100644
+--- a/open-vm-tools/libDeployPkg/linuxDeployment.c
++++ b/open-vm-tools/libDeployPkg/linuxDeployment.c
+@@ -824,17 +824,18 @@ TransitionState(const char* stateFrom, const char* stateTo)
+  *
+  *-----------------------------------------------------------------------------
+  */
+-static char*
+-GetNicsToEnable(const char* dir)
++
++static char *
++GetNicsToEnable(const char *dir)
+ {
+    /*
+-    * The file nics.txt will list ordinal number of all nics to enable separated by
+-    * a ",". In current architecture we can have max 4 nics. So we just have to read
+-    * maximum of 7 characters. This code uses 1024 chars to make sure any future
+-    * needs are accomodated.
++    * The file nics.txt will list ordinal number of all nics to enable separated
++    * by a ",". In current architecture we can have max 4 nics. So we just have
++    * to read maximum of 7 characters. This code uses 1024 chars to make sure
++    * any future needs are accomodated.
+     */
+    static const unsigned int NICS_SIZE = 1024;
+-   static const char* nicFile = "/nics.txt";
++   static const char *nicFile = "/nics.txt";
+ 
+    FILE *file;
+ 
+@@ -852,7 +853,9 @@ GetNicsToEnable(const char* dir)
+    if (file) {
+       ret = malloc(NICS_SIZE);
+       if (ret == NULL) {
+-         SetDeployError("Error allocating memory to read nic file '%s'", fileName);
++         SetDeployError("Error allocating memory to read nic file '%s'",
++                        fileName);
++         fclose(file);
+          free(fileName);
+          return ret;
+       }
+@@ -862,7 +865,8 @@ GetNicsToEnable(const char* dir)
+ 
+       // Check various error condition
+       if (ferror(file)) {
+-         SetDeployError("Error reading nic file '%s'.(%s)", fileName, strerror(errno));
++         SetDeployError("Error reading nic file '%s'.(%s)", fileName,
++                        strerror(errno));
+          free(ret);
+          ret = NULL;
+       }
+@@ -880,6 +884,7 @@ GetNicsToEnable(const char* dir)
+    return ret;
+ }
+ 
++
+ /**
+  *------------------------------------------------------------------------------
+  *
+-- 
+1.8.3.1
+

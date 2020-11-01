@@ -1,0 +1,61 @@
+From 8fbef69f0b3ce6648d594794b945169331ddfa06 Mon Sep 17 00:00:00 2001
+From: Cathy Avery <cavery@redhat.com>
+Date: Tue, 3 Dec 2019 14:30:49 +0100
+Subject: Address two Coverity-reported issues in hostinfoPosix.c.
+
+RH-Author: Cathy Avery <cavery@redhat.com>
+Message-id: <20191203143050.23065-4-cavery@redhat.com>
+Patchwork-id: 92834
+O-Subject: [RHEL8.2 open-vm-tools PATCH 3/4] Address two Coverity-reported issues in hostinfoPosix.c.
+Bugzilla: 1769881
+RH-Acked-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+RH-Acked-by: Miroslav Rezanina <mrezanin@redhat.com>
+
+commit 8a01c912927b5bb8cdbfa57f5e8c92e8cf792bef
+Author: Oliver Kurth <okurth@vmware.com>
+Date:   Fri Nov 22 14:52:35 2019 -0800
+
+    Address two Coverity-reported issues in hostinfoPosix.c.
+
+    Rework some code with the intent of making it more straightfoward,
+    which also eliminates a false positive.
+
+    Check the return value from PosixUnlink and log a warning on error.
+
+Signed-off-by: Cathy Avery <cavery@redhat.com>
+Signed-off-by: Miroslav Rezanina <mrezanin@redhat.com>
+---
+ open-vm-tools/lib/misc/hostinfoPosix.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/open-vm-tools/lib/misc/hostinfoPosix.c b/open-vm-tools/lib/misc/hostinfoPosix.c
+index 9d58abe..20cefb5 100644
+--- a/open-vm-tools/lib/misc/hostinfoPosix.c
++++ b/open-vm-tools/lib/misc/hostinfoPosix.c
+@@ -1153,10 +1153,7 @@ out:
+    if (success) {
+       result[nArgs - 1] = DynBuf_Detach(&b);
+    } else {
+-      if (nArgs != 0) {
+-         Util_FreeStringList(result, nArgs);
+-      }
+-
++      Util_FreeStringList(result, nArgs);
+       result = NULL;
+    }
+ 
+@@ -2916,7 +2913,10 @@ Hostinfo_Daemonize(const char *path,             // IN: NUL-terminated UTF-8
+           * with another process attempting to daemonize and unlinking the
+           * file it created instead.
+           */
+-         Posix_Unlink(pidPath);
++         if (Posix_Unlink(pidPath) != 0) {
++            Warning("%s: Unable to unlink %s: %u\n",
++                    __FUNCTION__, pidPath, errno);
++         }
+       }
+ 
+       errno = err;
+-- 
+1.8.3.1
+

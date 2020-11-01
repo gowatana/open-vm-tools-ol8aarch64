@@ -1,0 +1,60 @@
+From 036b206fac64786447e841c7b57941ecbdf84e77 Mon Sep 17 00:00:00 2001
+From: Cathy Avery <cavery@redhat.com>
+Date: Fri, 14 Feb 2020 12:23:09 +0100
+Subject: Rectify a log spew in vmsvc logging (vmware-vmsvc-root.log )
+
+RH-Author: Cathy Avery <cavery@redhat.com>
+Message-id: <20200214122309.5769-1-cavery@redhat.com>
+Patchwork-id: 93876
+O-Subject: [RHEL8.2 open-vm-tools PATCH] Rectify a log spew in vmsvc logging (vmware-vmsvc-root.log )
+Bugzilla: 1800812
+RH-Acked-by: Eduardo Otubo <otubo@redhat.com>
+RH-Acked-by: Mohammed Gamal <mgamal@redhat.com>
+
+Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1800812
+Brew: https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=26372468
+Branch: rhel8/master-11.0.0
+Tested: By QE
+Upstream Status: stable-11.0.5-suse-bug-1162435 targeted for 11.1.0
+
+commit 4ee0bd3c8ead89541ab7d196fb54e940e397420d
+Author: Oliver Kurth <okurth@vmware.com>
+Date: Fri, 7 Feb 2020 10:39:38 -0800
+
+    Rectify a log spew in vmsvc logging (vmware-vmsvc-root.log )
+
+    When a LSI Logic Parallel SCSI controller sits in PCI bus 0
+    (SCSI controller 0), the Linux disk device enumeration does not provide
+    a "label" file with the controller name.  This results in messages like
+
+    "GuestInfoGetDiskDevice: Missing disk device name; VMDK mapping unavailable for "/var/log", fsName: "/dev/sda2"
+
+    repeatedly appearing in the vmsvc logging.  The patch converts what previously
+    was a warning message to a debug message and thus avoids the log spew.
+
+Signed-off-by: Cathy Avery <cavery@redhat.com>
+Signed-off-by: Miroslav Rezanina <mrezanin@redhat.com>
+---
+ open-vm-tools/services/plugins/guestInfo/diskInfo.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/open-vm-tools/services/plugins/guestInfo/diskInfo.c b/open-vm-tools/services/plugins/guestInfo/diskInfo.c
+index 878276c..032c092 100644
+--- a/open-vm-tools/services/plugins/guestInfo/diskInfo.c
++++ b/open-vm-tools/services/plugins/guestInfo/diskInfo.c
+@@ -846,9 +846,9 @@ GuestInfoGetDiskDevice(const char *fsName,
+     */
+    for (indx = 0; indx < partEntry->diskDevCnt; indx++) {
+       if (partEntry->diskDevNames[indx][0] == '\0') {
+-         g_warning("%s: Missing disk device name; VMDK mapping unavailable "
+-                   "for \"%s\", fsName: \"%s\"\n", __FUNCTION__,
+-                   partEntry->name, fsName);
++         g_debug("%s: Missing disk device name; VMDK mapping unavailable "
++                 "for \"%s\", fsName: \"%s\"\n", __FUNCTION__,
++                 partEntry->name, fsName);
+          partEntry->diskDevCnt = 0;
+          free(partEntry->diskDevNames);
+          partEntry->diskDevNames = NULL;
+-- 
+1.8.3.1
+

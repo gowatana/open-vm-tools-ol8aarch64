@@ -1,0 +1,39 @@
+From dd9e505722eeb8e2e5e8db6ab903b2bd9480a224 Mon Sep 17 00:00:00 2001
+From: Cathy Avery <cavery@redhat.com>
+Date: Tue, 21 Apr 2020 10:38:48 +0200
+Subject: [PATCH 2/3] Update copyright to reflect previous change.
+
+RH-Author: Cathy Avery <cavery@redhat.com>
+Message-id: <20200331185439.5940-3-cavery@redhat.com>
+Patchwork-id: 94517
+O-Subject: [RHEL-8.2.1 open-vm-tools PATCH 2/2] Update copyright to reflect previous change.
+Bugzilla: 1811729
+RH-Acked-by: Miroslav Rezanina <mrezanin@redhat.com>
+RH-Acked-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+
+commit 95bb9273cccfd38e0f3299828a0a6cf5a8c30efb
+Author: Oliver Kurth <okurth@vmware.com>
+Date: Tue, 17 Mar 2020 14:36:55 -0700
+
+    Update copyright to reflect previous change.
+
+Signed-off-by: Cathy Avery <cavery@redhat.com>
+Signed-off-by: Miroslav Rezanina <mrezanin@redhat.com>
+---
+ open-vm-tools/namespacetool/namespacetool.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/open-vm-tools/namespacetool/namespacetool.c b/open-vm-tools/namespacetool/namespacetool.c
+index bfd003d..fc38f06 100644
+--- a/open-vm-tools/namespacetool/namespacetool.c
++++ b/open-vm-tools/namespacetool/namespacetool.c
+@@ -1,5 +1,5 @@
+ /*********************************************************
+- * Copyright (C) 2016-2019 VMware, Inc. All rights reserved.
++ * Copyright (C) 2016-2020 VMware, Inc. All rights reserved.
+  *
+  * This program is free software; you can redistribute it and/or modify it
+  * under the terms of the GNU Lesser General Public License as published
+-- 
+1.8.3.1
+

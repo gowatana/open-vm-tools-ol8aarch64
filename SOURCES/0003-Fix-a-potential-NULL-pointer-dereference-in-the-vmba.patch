@@ -1,0 +1,53 @@
+From 9beab82cd41a79babaeef46129a88b9a8d7e120f Mon Sep 17 00:00:00 2001
+From: Cathy Avery <cavery@redhat.com>
+Date: Tue, 3 Dec 2019 14:30:48 +0100
+Subject: Fix a potential NULL pointer dereference in the vmbackup plugin.
+
+RH-Author: Cathy Avery <cavery@redhat.com>
+Message-id: <20191203143050.23065-3-cavery@redhat.com>
+Patchwork-id: 92836
+O-Subject: [RHEL8.2 open-vm-tools PATCH 2/4] Fix a potential NULL pointer dereference in the vmbackup plugin.
+Bugzilla: 1769881
+RH-Acked-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+RH-Acked-by: Miroslav Rezanina <mrezanin@redhat.com>
+
+commit 0bb6cf83fb6b1f80c99beb11cd47e0db02e252ff
+Author: Oliver Kurth <okurth@vmware.com>
+Date:   Fri Nov 22 14:52:35 2019 -0800
+
+    Fix a potential NULL pointer dereference in the vmbackup plugin.
+
+    In some circumtances, VmBackupAsyncCallback might dereference
+    gBackupState after calling VmBackupDoAbort even though the
+    latter function can potentially set gBackupState to NULL.  Add
+    a check to prevent the potential NULL pointer dereference.
+
+Signed-off-by: Cathy Avery <cavery@redhat.com>
+Signed-off-by: Miroslav Rezanina <mrezanin@redhat.com>
+---
+ open-vm-tools/services/plugins/vmbackup/stateMachine.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/open-vm-tools/services/plugins/vmbackup/stateMachine.c b/open-vm-tools/services/plugins/vmbackup/stateMachine.c
+index 6b42286..5c01a7b 100644
+--- a/open-vm-tools/services/plugins/vmbackup/stateMachine.c
++++ b/open-vm-tools/services/plugins/vmbackup/stateMachine.c
+@@ -675,6 +675,15 @@ VmBackupAsyncCallback(void *clientData)
+       if (gBackupState->rpcState == VMBACKUP_RPC_STATE_ERROR) {
+          g_warning("Aborting backup operation due to RPC errors.");
+          VmBackupDoAbort();
++
++         /*
++          * Check gBackupState, since the abort could cause a transition to
++          * VMBACKUP_MSTATE_IDLE, in which case the VmBackupState structure
++          * would be freed and gBackupState would be NULL.
++          */
++         if (gBackupState == NULL) {
++            return FALSE;
++         }
+          goto exit;
+       }
+    }
+-- 
+1.8.3.1
+

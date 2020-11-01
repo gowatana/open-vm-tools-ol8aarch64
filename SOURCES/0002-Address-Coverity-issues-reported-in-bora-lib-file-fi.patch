@@ -1,0 +1,63 @@
+From e1d523d4fdb179e3fd2494d18e813a4e392006e5 Mon Sep 17 00:00:00 2001
+From: Cathy Avery <cavery@redhat.com>
+Date: Tue, 3 Dec 2019 14:30:47 +0100
+Subject: Address Coverity issues reported in bora/lib/file/file.c.
+
+RH-Author: Cathy Avery <cavery@redhat.com>
+Message-id: <20191203143050.23065-2-cavery@redhat.com>
+Patchwork-id: 92833
+O-Subject: [RHEL8.2 open-vm-tools PATCH 1/4] Address Coverity issues reported in bora/lib/file/file.c.
+Bugzilla: 1769881
+RH-Acked-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+RH-Acked-by: Miroslav Rezanina <mrezanin@redhat.com>
+
+commit 5ca2850b60de0f27c3f8c565d7b7e553acc2921f
+Author: Oliver Kurth <okurth@vmware.com>
+Date:   Tue Aug 27 12:55:37 2019 -0700
+
+    Address Coverity issues reported in bora/lib/file/file.c.
+
+    Fix a minor memory leak in the function File_ExpandAndCheckDir.
+    Also add annotations for unchecked return values in functions
+    GetOldMachineID and File_MoveTree, so that Coverity scans of
+    open-vm-tools will automatically classify these issues as
+    "Intentional".  These annotations are useful both for internal
+    use as well as for partners who run Coverity scans on open-vm-tools.
+
+Signed-off-by: Cathy Avery <cavery@redhat.com>
+Signed-off-by: Miroslav Rezanina <mrezanin@redhat.com>
+---
+ open-vm-tools/lib/file/file.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/open-vm-tools/lib/file/file.c b/open-vm-tools/lib/file/file.c
+index 7dae12c..774ec41 100644
+--- a/open-vm-tools/lib/file/file.c
++++ b/open-vm-tools/lib/file/file.c
+@@ -558,6 +558,7 @@ GetOldMachineID(void)
+              sizeof hardwareID);
+ 
+       /* Base 64 encode the binary data to obtain printable characters */
++      /* coverity[check_return] */
+       Base64_Encode(rawMachineID, sizeof rawMachineID, encodedMachineID,
+                     sizeof encodedMachineID, NULL);
+ 
+@@ -1437,6 +1438,7 @@ File_MoveTree(const char *srcName,    // IN:
+              * Only clean up if we created the directory.  Not attempting to
+              * clean up partial failures.
+              */
++            /* coverity[check_return] */
+             File_DeleteDirectoryTree(dstName);
+          }
+       }
+@@ -2186,6 +2188,7 @@ File_ExpandAndCheckDir(const char *dirName)  // IN:
+ 
+          return edirName;
+       }
++      free(edirName);
+    }
+ 
+    return NULL;
+-- 
+1.8.3.1
+
