@@ -3,7 +3,7 @@
 ## Introduction
 
 * This is an unofficial build for Home Lab.
-* Install on the guest OS on [ESXi-on-ARM](https://flings.vmware.com/esxi-arm-edition).
+* Install to the Guest OS on [ESXi-on-ARM](https://flings.vmware.com/esxi-arm-edition).
 
 ## To install
 
