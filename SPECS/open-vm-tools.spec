@@ -19,16 +19,16 @@
 ################################################################################
 
 %global _hardened_build 1
-%global majorversion    11.0
-%global minorversion    5
-%global toolsbuild      15389592
+%global majorversion    11.2
+%global minorversion    0
+%global toolsbuild      16938113
 %global toolsversion    %{majorversion}.%{minorversion}
 %global toolsdaemon     vmtoolsd
 %global vgauthdaemon    vgauthd
 
 Name:             open-vm-tools
 Version:          %{toolsversion}
-Release:          3.0.1%{?dist}
+Release:          1.gowatana%{?dist}
 Summary:          Open Virtual Machine Tools for virtual machines hosted on VMware
 Group:            Applications/System
 License:          GPLv2
@@ -39,19 +39,19 @@ Source2:          %{vgauthdaemon}.service
 Source3:          run-vmblock\x2dfuse.mount
 Source4:          open-vm-tools.conf
 
-ExclusiveArch:    x86_64
+ExclusiveArch:    aarch64
 
-Patch0002: 0002-Address-Coverity-issues-reported-in-bora-lib-file-fi.patch
-Patch0003: 0003-Fix-a-potential-NULL-pointer-dereference-in-the-vmba.patch
-Patch0004: 0004-Address-two-Coverity-reported-issues-in-hostinfoPosi.patch
-Patch0005: 0005-Fix-a-resource-leak-issue-in-deployPkg.patch
-Patch0006: 0006-Rectify-a-log-spew-in-vmsvc-logging-vmware-vmsvc-roo.patch
+#Patch0002: 0002-Address-Coverity-issues-reported-in-bora-lib-file-fi.patch
+#Patch0003: 0003-Fix-a-potential-NULL-pointer-dereference-in-the-vmba.patch
+#Patch0004: 0004-Address-two-Coverity-reported-issues-in-hostinfoPosi.patch
+#Patch0005: 0005-Fix-a-resource-leak-issue-in-deployPkg.patch
+#Patch0006: 0006-Rectify-a-log-spew-in-vmsvc-logging-vmware-vmsvc-roo.patch
 # For bz#1811729 - [ESXi][RHEL8.2.1]open-vm-tools coverity scan issue
-Patch7: ovt-Fix-a-trivial-memory-leak-in-namespacetool.c.patch
+#Patch7: ovt-Fix-a-trivial-memory-leak-in-namespacetool.c.patch
 # For bz#1811729 - [ESXi][RHEL8.2.1]open-vm-tools coverity scan issue
-Patch8: ovt-Update-copyright-to-reflect-previous-change.patch
+#Patch8: ovt-Update-copyright-to-reflect-previous-change.patch
 # For bz#1809751 - [ESXi][RHEL8.2.1]open-vm-tools add appinfo plugin patch
-Patch9: ovt-add-appinfo-plugin.patch
+#Patch9: ovt-add-appinfo-plugin.patch
 
 Patch1001: add-vmware-udev-rule-for-scsi-devices.patch
 Patch1002: fix-vmware-udev-rule-for-scsi-devices.patch
@@ -192,7 +192,7 @@ rm -f docs/api/build/html/FreeSans.ttf
 rm -fr %{buildroot}%{_sbindir} %{buildroot}/sbin/mount.vmhgfs
 
 # Move vm-support to /usr/bin
-mv %{buildroot}%{_sysconfdir}/vmware-tools/vm-support %{buildroot}%{_bindir}
+#mv %{buildroot}%{_sysconfdir}/vmware-tools/vm-support %{buildroot}%{_bindir}
 
 # Systemd unit files
 install -p -m 644 -D %{SOURCE1} %{buildroot}%{_unitdir}/%{toolsdaemon}.service
@@ -339,6 +339,12 @@ fi
 %{_bindir}/vmware-vgauth-smoketest
 
 %changelog
+* Wed Oct 14 2020 Go Watanabe <gowatana@vmtn.jp> - 11.2.0-1.gowatana.el8
+- Custom Build for ESXi on ARM. - Raspberry Pi 4 B
+  This is an experimental build.
+  original .spec and files:
+  https://yum.oracle.com/repo/OracleLinux/OL8/appstream/x86_64/getPackageSource/open-vm-tools-11.0.5-3.0.1.el8.src.rpm
+
 * Tue Jul 21 2020 EL Errata <el-errata_ww@oracle.com> - 11.0.5-3.0.1.el8
 - Fix spaces in vmware udev rule for scsi devices [Orabug: 24461968]
 - Fix vmware udev rule in 99-vmware-scsi-timeout.rules file. [Orabug: 22815019]

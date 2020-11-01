@@ -1,7 +1,7 @@
 [Unit]
 Description=VGAuth Service for open-vm-tools
 Documentation=http://github.com/vmware/open-vm-tools
-ConditionVirtualization=vmware
+#ConditionVirtualization=vmware
 PartOf=vmtoolsd.service
 
 [Service]
