@@ -339,7 +339,7 @@ fi
 %{_bindir}/vmware-vgauth-smoketest
 
 %changelog
-* Wed Oct 14 2020 Go Watanabe <gowatana@vmtn.jp> - 11.2.0-1.gowatana.el8
+* Mon Nov 02 2020 Go Watanabe <gowatana@vmtn.jp> - 11.2.0-1.gowatana.el8
 - Custom Build for ESXi on ARM. - Raspberry Pi 4 B
   This is an experimental build.
   original .spec and files:
