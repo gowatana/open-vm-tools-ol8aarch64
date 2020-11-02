@@ -3,7 +3,7 @@
 ## Introduction
 
 * This is an unofficial build for Home Lab.
-* Install to the Guest OS on [ESXi-on-ARM](https://flings.vmware.com/esxi-arm-edition).
+* Install to the Guest OS on [ESXi Arm Edition](https://flings.vmware.com/esxi-arm-edition).
 * Download the disk image here: [Oracle Linux for ARM](https://www.oracle.com/linux/downloads/linux-arm-downloads.html)
 
 ## To install
